@@ -47,12 +47,3 @@ class Partie:
         # Affiche les scores finaux des joueurs
         self.jeu.afficher_scores()
         print("\nPartie terminée !")
-
-
-# Point d'entrée principal de l'application
-if __name__ == "__main__":
-    # -------------------------------------------------------------------
-    # Initialise et lance une partie de Yahtzee.
-    # -------------------------------------------------------------------
-    partie = Partie()
-    partie.lancer_partie()
