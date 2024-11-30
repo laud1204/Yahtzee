@@ -57,7 +57,7 @@ class Jeu:
             if figure in self.FIGURES_VALIDES:
                 if joueur.feuille_score.scores[figure] is None:
                     score = joueur.feuille_score.calculer_score(figure, des_actuels)
-                    joueur.feuille_score.noter_score(figure, score)  # Appelle noter_score
+                    joueur.feuille_score.noter_score(figure, score)
                     joueur.feuille_score.afficher_score(des_actuels)
                     break
                 else:

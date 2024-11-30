@@ -4,22 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c910f584-94e4-43f4-85fc-3bb62063c13d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Yahtzee-v1.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CalculateurDeScore.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Client.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/De.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FeuilleScore.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Jeu.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Joueur.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Partie.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Serveur.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Tableau.py" afterDir="false" />
+    <list default="true" id="c910f584-94e4-43f4-85fc-3bb62063c13d" name="Changes" comment="commit all">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FeuilleScore.py" beforeDir="false" afterPath="$PROJECT_DIR$/FeuilleScore.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Jeu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Jeu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Joueur.py" beforeDir="false" afterPath="$PROJECT_DIR$/Joueur.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +25,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "laud1204"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/laud1204/Yahtzee-v1.git",
+    "accountId": "8508f5ad-b297-4f6c-b2f2-b287e623330b"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -132,15 +133,39 @@
       <option name="presentableId" value="Default" />
       <updated>1732962569135</updated>
       <workItem from="1732962571725" duration="46000" />
-      <workItem from="1732962683423" duration="9144000" />
+      <workItem from="1732962683423" duration="11122000" />
     </task>
+    <task id="LOCAL-00001" summary="commit all">
+      <option name="closed" value="true" />
+      <created>1732972048678</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1732972048678</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="commit all" />
+    <option name="LAST_COMMIT_MESSAGE" value="commit all" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Yahtzee_v1$Partie.coverage" NAME="Partie Coverage Results" MODIFIED="1732971654873" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Yahtzee_v1$Partie.coverage" NAME="Partie Coverage Results" MODIFIED="1732973232622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Yahtzee_v1$Jeu.coverage" NAME="Jeu Coverage Results" MODIFIED="1732963706428" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

@@ -22,7 +22,6 @@ class FeuilleScore:
             'Bonus Section Supérieure': 0  # Bonus initialisé à 0
         }
         self.remplissage = {key: False for key in self.scores}  # Pour savoir si la figure est remplie ou non
-        self.des = []  # Liste des valeurs des dés actuels
 
     def noter_score(self, figure: str, valeur: int) -> None:
         """
@@ -31,10 +30,9 @@ class FeuilleScore:
         """
         if figure in self.scores and self.scores[figure] is None:
             self.scores[figure] = valeur
-            self.remplissage[figure] = True
             print(f"Score de {valeur} noté pour la figure {figure}")
 
-            # Vérifie si la figure est dans la section supérieure
+            # Vérifie si la figure appartient à la section supérieure
             if figure in ['1', '2', '3', '4', '5', '6']:
                 if self.verifier_bonus_section_superieure():
                     print("Félicitations ! Vous avez atteint le bonus de la section supérieure (+35 points)")
@@ -45,9 +43,6 @@ class FeuilleScore:
         """
         Affiche le tableau des scores réalisés et des scores théoriques en utilisant la classe Tableau.
         """
-        self.des = des  # Met à jour les dés actuels
-
-        # Exclut "Bonus Section Supérieure" des figures pour le calcul des scores théoriques
         scores_theoriques = {
             figure: self.calculer_score(figure, des)
             for figure in self.scores.keys()
@@ -55,32 +50,39 @@ class FeuilleScore:
         }
 
         # Calcul du score global réalisé
-        total_score = sum(score for score in self.scores.values() if score is not None)
+        total_score = sum(
+            score for score in self.scores.values() if score is not None
+        )
 
         # Prépare les données pour le tableau
         figures_tableau = [
             (
                 figure,
                 self.scores[figure] if self.scores[figure] is not None else "Non réalisée",
-                scores_theoriques.get(figure, "N/A")  # Valeur par défaut si pas de score théorique
+                scores_theoriques.get(figure, "N/A") if figure != "Bonus Section Supérieure" else "N/A",
             )
             for figure in self.scores.keys()
         ]
 
-        # Utilise la classe Tableau pour afficher les scores
         tableau = Tableau(headers=["Figure", "Score réalisé", "Score théorique"], data=figures_tableau)
         print("\nTableau des scores :")
         tableau.afficher()
-
-        # Affiche le score global réalisé
         print(f"Score global réalisé : {total_score}")
 
     def verifier_bonus_section_superieure(self) -> bool:
-        # Vérifie si le joueur a atteint le bonus de la section supérieure
-        section_sup_score = sum(self.scores[str(i)] for i in range(1, 7) if self.scores[str(i)] is not None)
-        if section_sup_score >= 63:
-            self.scores['Bonus section supérieure'] = 35
-            return True
+        """
+        Vérifie si le joueur a atteint le bonus de la section supérieure et l'ajoute si nécessaire.
+        :return: True si le bonus est ajouté, sinon False.
+        """
+        # Calcul du score total de la section supérieure
+        section_sup_score = sum(
+            self.scores[str(i)] for i in range(1, 7) if self.scores[str(i)] is not None
+        )
+
+        # Ajout du bonus si le score total atteint ou dépasse 63
+        if section_sup_score >= 63 and self.scores['Bonus Section Supérieure'] == 0:
+            self.scores['Bonus Section Supérieure'] = 35
+            return True  # Bonus ajouté
         return False
 
     def calculer_score(self, figure: str, des: list[int]) -> int:

@@ -5,4 +5,3 @@ class Joueur:
         self.nom = nom  # Nom du joueur
         self.score = {}  # Dictionnaire pour stocker les scores par figure
         self.feuille_score = FeuilleScore()  # Feuille de score associée au joueur
-        self.des = []  # Dés associés au joueur pour un tour (peuvent être mis à jour dynamiquement)
