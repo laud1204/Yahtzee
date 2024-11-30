@@ -3,8 +3,20 @@ from Tableau import Tableau
 
 
 class FeuilleScore:
+    # -------------------------------------------------------------------
+    # Classe gérant les scores d'un joueur dans une partie de Yahtzee.
+    #
+    # Attributs :
+    # - scores : Dictionnaire contenant les scores pour chaque figure.
+    # - remplissage : Indique quelles figures ont déjà été remplies.
+    # -------------------------------------------------------------------
+
     def __init__(self):
-        # Initialisation des scores avec None, ce qui signifie que la figure n'a pas encore été remplie
+        # -------------------------------------------------------------------
+        # Initialise les scores pour chaque figure et l'état de remplissage.
+        # - Les scores sont initialisés à None, sauf pour le bonus qui est à 0.
+        # - Le remplissage indique si une figure a déjà été utilisée.
+        # -------------------------------------------------------------------
         self.scores = {
             '1': None,
             '2': None,
@@ -24,10 +36,12 @@ class FeuilleScore:
         self.remplissage = {key: False for key in self.scores}  # Pour savoir si la figure est remplie ou non
 
     def noter_score(self, figure: str, valeur: int) -> None:
-        """
-        Note le score pour une figure donnée. Si la figure appartient à la section supérieure,
-        vérifie si le bonus de la section supérieure est atteint.
-        """
+        # -------------------------------------------------------------------
+        # Note le score pour une figure donnée et vérifie le bonus si besoin.
+        #
+        # :param figure: Nom de la figure à remplir (ex : '1', 'Brelan').
+        # :param valeur: Score à attribuer à la figure.
+        # -------------------------------------------------------------------
         if figure in self.scores and self.scores[figure] is None:
             self.scores[figure] = valeur
             print(f"Score de {valeur} noté pour la figure {figure}")
@@ -40,9 +54,11 @@ class FeuilleScore:
             print(f"Figure {figure} déjà remplie ou inexistante")
 
     def afficher_score(self, des: list[int]) -> None:
-        """
-        Affiche le tableau des scores réalisés et des scores théoriques en utilisant la classe Tableau.
-        """
+        # -------------------------------------------------------------------
+        # Affiche le tableau des scores réalisés et des scores théoriques.
+        #
+        # :param des: Liste des valeurs des dés actuels pour calculer les scores théoriques.
+        # -------------------------------------------------------------------
         scores_theoriques = {
             figure: self.calculer_score(figure, des)
             for figure in self.scores.keys()
@@ -70,10 +86,11 @@ class FeuilleScore:
         print(f"Score global réalisé : {total_score}")
 
     def verifier_bonus_section_superieure(self) -> bool:
-        """
-        Vérifie si le joueur a atteint le bonus de la section supérieure et l'ajoute si nécessaire.
-        :return: True si le bonus est ajouté, sinon False.
-        """
+        # -------------------------------------------------------------------
+        # Vérifie si le joueur a atteint le bonus de la section supérieure.
+        #
+        # :return: True si le bonus est ajouté, sinon False.
+        # -------------------------------------------------------------------
         # Calcul du score total de la section supérieure
         section_sup_score = sum(
             self.scores[str(i)] for i in range(1, 7) if self.scores[str(i)] is not None
@@ -86,6 +103,13 @@ class FeuilleScore:
         return False
 
     def calculer_score(self, figure: str, des: list[int]) -> int:
+        # -------------------------------------------------------------------
+        # Calcule le score théorique pour une figure donnée.
+        #
+        # :param figure: Nom de la figure à calculer (ex : '1', 'Brelan').
+        # :param des: Liste des valeurs des dés.
+        # :return: Score calculé pour la figure.
+        # -------------------------------------------------------------------
         calculateur = CalculateurDeScore()
         if figure == '1':
             return calculateur.calculer_un(des)
