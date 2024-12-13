@@ -1,7 +1,15 @@
-# launcher.py
-import os
-from server.server import start_server
-from client.client import main as start_client
+import threading
+from server.server import YahtzeeServer
+from client.client import YahtzeeClient
+
+def start_server():
+    server = YahtzeeServer()
+    server.start_server()
+
+def start_client():
+    client = YahtzeeClient()
+    client.connect()
+    client.start_game()
 
 def main():
     print("Bienvenue dans le jeu Yahtzee !")
@@ -11,7 +19,8 @@ def main():
 
     if choice == "1":
         print("Démarrage du serveur...")
-        start_server()
+        server_thread = threading.Thread(target=start_server)
+        server_thread.start()
     elif choice == "2":
         print("Démarrage du client...")
         start_client()
