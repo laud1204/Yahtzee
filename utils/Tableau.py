@@ -38,11 +38,11 @@ class Tableau:
             "|".join(f" {str(row[i]).ljust(col_widths[i])} " for i in range(len(row)))
             for row in self.data
         ]
-
-        # Affichage complet du tableau
-        print(f"+{ligne_separation}+")         # Ligne de séparation supérieure
-        print(f"|{ligne_headers}|")            # Ligne des en-têtes
-        print(f"+{ligne_separation}+")         # Ligne de séparation entre en-têtes et données
+        tableau = []
+        tableau.append(f"+{ligne_separation}+")
+        tableau.append(f"|{ligne_headers}|")
+        tableau.append(f"+{ligne_separation}+")
         for ligne in lignes_data:
-            print(f"|{ligne}|")                # Lignes des données
-        print(f"+{ligne_separation}+")         # Ligne de séparation inférieure
+            tableau.append(f"|{ligne}|")
+        tableau.append(f"+{ligne_separation}+")
+        return "\n".join(tableau)

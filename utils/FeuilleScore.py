@@ -1,5 +1,5 @@
-from CalculateurDeScore import CalculateurDeScore
-from Tableau import Tableau
+from utils.CalculateurDeScore import CalculateurDeScore
+from utils.Tableau import Tableau
 
 
 class FeuilleScore:
@@ -53,7 +53,7 @@ class FeuilleScore:
         else:
             print(f"Figure {figure} déjà remplie ou inexistante")
 
-    def afficher_score(self, des: list[int]) -> None:
+    def afficher_score(self, des: list[int]) -> str:
         # -------------------------------------------------------------------
         # Affiche le tableau des scores réalisés et des scores théoriques.
         #
@@ -81,9 +81,7 @@ class FeuilleScore:
         ]
 
         tableau = Tableau(headers=["Figure", "Score réalisé", "Score théorique"], data=figures_tableau)
-        print("\nTableau des scores :")
-        tableau.afficher()
-        print(f"Score global réalisé : {total_score}")
+        return tableau.afficher()
 
     def verifier_bonus_section_superieure(self) -> bool:
         # -------------------------------------------------------------------
