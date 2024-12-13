@@ -17,19 +17,27 @@ class YahtzeeServer:
         self.game_started = False
         self.turn_lock = threading.Lock()
         self.current_turn = 0
-        self.max_turns = 6
+        self.max_turns = 13
 
-    def start_server(self):
+    def demarrer(self):
+        # -------------------------------------------------------------------
+        # Démarre le serveur pour écouter les connexions entrantes des joueurs.
+        # -------------------------------------------------------------------
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen(5)
         print(f"Le serveur Yahtzee est en écoute sur {self.host}:{self.port}")
 
         while True:
             client_socket, addr = self.server_socket.accept()
-            client_handler = threading.Thread(target=self.handle_client, args=(client_socket, addr))
+            client_handler = threading.Thread(target=self.gerer_joueur, args=(client_socket, addr))
             client_handler.start()
 
     def broadcast(self, message):
+        # -------------------------------------------------------------------
+        # Envoie un message à tous les joueurs connectés.
+        #
+        # :param message: Message à envoyer.
+        # -------------------------------------------------------------------
         disconnected_players = []
         for player in self.players:
             try:
@@ -43,7 +51,10 @@ class YahtzeeServer:
             del self.scores[player["name"]]
             del self.feuilles_scores[player["name"]]
 
-    def wait_for_players(self):
+    def attendre_joueurs(self):
+        # -------------------------------------------------------------------
+        # Attend que le nombre requis de joueurs se connecte avant de commencer la partie.
+        # -------------------------------------------------------------------
         while len(self.players) < self.required_players:
             self.broadcast(f"En attente de {self.required_players - len(self.players)} joueur(s) pour démarrer la partie...\n")
             time.sleep(2)
@@ -51,7 +62,13 @@ class YahtzeeServer:
         self.game_started = True
         self.broadcast("Tous les joueurs sont connectés. La partie commence!\n")
 
-    def handle_client(self, client_socket, addr):
+    def gerer_joueur(self, client_socket, addr):
+        # -------------------------------------------------------------------
+        # Gère la connexion et les interactions avec un joueur donné.
+        #
+        # :param client_socket: Socket du client.
+        # :param addr: Adresse du client.
+        # -------------------------------------------------------------------
         try:
             client_socket.send("Entrez votre nom:".encode())
             player_name = client_socket.recv(1024).decode().strip()
@@ -77,12 +94,12 @@ class YahtzeeServer:
             self.broadcast(f"{player_name} a rejoint la partie. Joueurs actuels: {[p['name'] for p in self.players]}")
 
             if len(self.players) == self.required_players and not self.game_started:
-                threading.Thread(target=self.wait_for_players).start()
+                threading.Thread(target=self.attendre_joueurs).start()
 
             while not self.game_started:
                 time.sleep(1)
 
-            self.run_game(client_socket, player_name)
+            self.tour(client_socket, player_name)
 
         except (BrokenPipeError, ConnectionResetError):
             print(f"Le joueur à l'adresse {addr} s'est déconnecté.")
@@ -94,19 +111,46 @@ class YahtzeeServer:
                     del self.feuilles_scores[player_name]
             client_socket.close()
 
-    def run_game(self, client_socket, player_name):
+    def tour(self, client_socket, player_name):
+        # -------------------------------------------------------------------
+        # Gère le déroulement d'un tour pour chaque joueur de la partie.
+        #
+        # Cette méthode s'assure que chaque joueur joue à tour de rôle. Elle
+        # envoie un message au joueur concerné lorsque c'est son tour et appelle
+        # la méthode pour effectuer le tour du joueur. Elle augmente le compteur
+        # de tours après chaque action. Quand le nombre maximum de tours est
+        # atteint, elle appelle la méthode pour annoncer le vainqueur.
+        #
+        # :param client_socket: Socket du client correspondant au joueur en cours.
+        # :param player_name: Nom du joueur en cours.
+        # -------------------------------------------------------------------
         while self.current_turn < self.max_turns * len(self.players):
             with self.turn_lock:
                 player_index = self.current_turn % len(self.players)
                 if self.players[player_index]["socket"] == client_socket:
                     client_socket.send(f"C'est votre tour, {player_name}.\n".encode())
-                    self.play_turn(client_socket, player_name)
+                    self.jouer_tour(client_socket, player_name)
                     self.current_turn += 1
 
         if self.current_turn >= self.max_turns * len(self.players):
-            self.announce_winner()
+            self.annoncer_vainqueur()
 
-    def play_turn(self, client_socket, player_name):
+    def jouer_tour(self, client_socket, player_name):
+        # -------------------------------------------------------------------
+        # Gère le tour d'un joueur, incluant le lancer des dés, les relances,
+        # le choix de la figure à remplir et le calcul du score.
+        #
+        # Cette méthode :
+        # - Lance les dés pour le joueur.
+        # - Offre au joueur jusqu'à deux relances des dés.
+        # - Affiche les résultats après chaque lancer.
+        # - Permet au joueur de choisir une figure à remplir avec le score obtenu.
+        # - Calcule et enregistre le score pour la figure choisie.
+        # - Diffuse les points marqués à tous les joueurs et affiche le tableau des scores.
+        #
+        # :param client_socket: Socket du client correspondant au joueur en cours.
+        # :param player_name: Nom du joueur en cours.
+        # -------------------------------------------------------------------
         dice = [random.randint(1, 6) for _ in range(5)]
         client_socket.send(f"Résultat initial des dés: {dice}\n".encode())
 
@@ -157,10 +201,20 @@ class YahtzeeServer:
         )
         client_socket.send(f"Points ajoutés: {score}. Score total: {self.scores[player_name]}\n".encode())
         self.broadcast(f"{player_name} a marqué {score} points pour la figure {figure}.\n")
-        self.show_scoreboard()
+        self.afficher_tableauScore()
 
 
-    def show_scoreboard(self):
+    def afficher_tableauScore(self):
+        # -------------------------------------------------------------------
+        # Affiche et diffuse le tableau des scores actuels des joueurs.
+        #
+        # Cette méthode :
+        # - Génère un tableau formaté avec les noms des joueurs et leurs scores respectifs.
+        # - Diffuse le tableau des scores à tous les joueurs connectés.
+        # - Affiche le tableau des scores sur le serveur.
+        #
+        # :return: Aucun retour. Le tableau est affiché et diffusé.
+        # ------------------------------------------------------------------
         header = f"{'Nom du joueur':<20}{'Score':<10}"
         separator = "-" * len(header)
         rows = [f"{name:<20}{score:<10}" for name, score in self.scores.items()]
@@ -168,7 +222,18 @@ class YahtzeeServer:
         self.broadcast(score_table)
         print(f"Tableau des scores actuel:\n{score_table}")
 
-    def announce_winner(self):
+    def annoncer_vainqueur(self):
+        # -------------------------------------------------------------------
+        # Annonce le gagnant de la partie en affichant le tableau final des scores.
+        #
+        # Cette méthode :
+        # - Détermine le joueur avec le score le plus élevé.
+        # - Génère un tableau formaté des scores de tous les joueurs.
+        # - Diffuse le message final à tous les joueurs connectés avec le nom du gagnant.
+        # - Affiche le message final sur le serveur.
+        #
+        # :return: Aucun retour. Le tableau des scores et le message du gagnant sont diffusés et affichés.
+        # -------------------------------------------------------------------
         winner = max(self.scores, key=self.scores.get)
         max_score = self.scores[winner]
         header = f"{'Nom du joueur':<20}{'Score':<10}"
@@ -182,4 +247,4 @@ class YahtzeeServer:
 
 if __name__ == "__main__":
     server = YahtzeeServer()
-    server.start_server()
+    server.demarrer()
