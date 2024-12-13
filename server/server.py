@@ -2,6 +2,8 @@ import socket
 import threading
 import random
 import time
+from utils.CalculateurDeScore import CalculateurDeScore
+from utils.FeuilleScore import FeuilleScore
 
 class YahtzeeServer:
     def __init__(self, host='127.0.0.1', port=65430):
@@ -10,6 +12,7 @@ class YahtzeeServer:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.players = []
         self.scores = {}
+        self.feuilles_scores = {}  # Associe chaque joueur à une feuille de score
         self.required_players = None
         self.game_started = False
         self.turn_lock = threading.Lock()
@@ -38,6 +41,7 @@ class YahtzeeServer:
         for player in disconnected_players:
             self.players.remove(player)
             del self.scores[player["name"]]
+            del self.feuilles_scores[player["name"]]
 
     def wait_for_players(self):
         while len(self.players) < self.required_players:
@@ -67,6 +71,7 @@ class YahtzeeServer:
 
                 self.players.append({"name": player_name, "socket": client_socket})
                 self.scores[player_name] = 0
+                self.feuilles_scores[player_name] = FeuilleScore()
 
             print(f"{player_name} a rejoint depuis {addr}.")
             self.broadcast(f"{player_name} a rejoint la partie. Joueurs actuels: {[p['name'] for p in self.players]}")
@@ -86,6 +91,7 @@ class YahtzeeServer:
                 self.players = [p for p in self.players if p["socket"] != client_socket]
                 if player_name in self.scores:
                     del self.scores[player_name]
+                    del self.feuilles_scores[player_name]
             client_socket.close()
 
     def run_game(self, client_socket, player_name):
@@ -105,25 +111,52 @@ class YahtzeeServer:
         client_socket.send(f"Résultat initial des dés: {dice}\n".encode())
 
         for _ in range(2):
-            client_socket.send("Voulez-vous relancer des dés ? (O/N)".encode())
+            client_socket.send("Voulez-vous relancer des dés ? (O/N):".encode())
             response = client_socket.recv(1024).decode().strip().upper()
             if response == "O":
                 client_socket.send("Indiquez les indices des dés à relancer (ex: 1,3,5):".encode())
                 indices = client_socket.recv(1024).decode().strip()
-                indices = list(map(int, indices.split(',')))
-                for i in indices:
-                    dice[i - 1] = random.randint(1, 6)
+                if indices:
+                    indices = list(map(int, indices.split(',')))
+                    for i in indices:
+                        dice[i - 1] = random.randint(1, 6)
                 client_socket.send(f"Résultat après relance: {dice}\n".encode())
             else:
                 break
 
-        client_socket.send("Choisissez un chiffre (1-6) à comptabiliser:".encode())
-        choice = int(client_socket.recv(1024).decode().strip())
-        score = dice.count(choice) * choice
-        self.scores[player_name] += score
+        # Correction de la construction de la chaîne à envoyer
+        figures_disponibles = [
+            figure for figure, score in self.feuilles_scores[player_name].scores.items() if score is None
+        ]
+        tableau_meilleur_score = self.feuilles_scores[player_name].afficher_score(dice)
+        client_socket.send(str(tableau_meilleur_score).encode())
+        time.sleep(0.5)
+        client_socket.send(f"Choisissez une figure à remplir: {figures_disponibles}:\n".encode())
+
+        while True:
+
+            figure = client_socket.recv(1024).decode().strip()
+
+
+            if figure not in self.feuilles_scores[player_name].scores:
+                client_socket.send("Figure invalide, tour ignoré.\n".encode())
+            if self.feuilles_scores[player_name].scores[figure] is not None:
+                client_socket.send("Figure déjà remplie.\n".encode())
+
+            else:
+                break
+
+
+
+        score = self.feuilles_scores[player_name].calculer_score(figure, dice)
+        self.feuilles_scores[player_name].noter_score(figure, score)
+        self.scores[player_name] = sum(
+            v for v in self.feuilles_scores[player_name].scores.values() if v is not None
+        )
         client_socket.send(f"Points ajoutés: {score}. Score total: {self.scores[player_name]}\n".encode())
-        self.broadcast(f"{player_name} a marqué {score} points. Total: {self.scores[player_name]}.\n")
+        self.broadcast(f"{player_name} a marqué {score} points pour la figure {figure}.\n")
         self.show_scoreboard()
+
 
     def show_scoreboard(self):
         header = f"{'Nom du joueur':<20}{'Score':<10}"
@@ -132,6 +165,7 @@ class YahtzeeServer:
         score_table = f"\n{header}\n{separator}\n" + "\n".join(rows) + "\n"
         self.broadcast(score_table)
         print(f"Tableau des scores actuel:\n{score_table}")
+
     def announce_winner(self):
         winner = max(self.scores, key=self.scores.get)
         max_score = self.scores[winner]
@@ -144,3 +178,6 @@ class YahtzeeServer:
         self.broadcast(final_message)
         print(final_message)
 
+if __name__ == "__main__":
+    server = YahtzeeServer()
+    server.start_server()

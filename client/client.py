@@ -45,7 +45,6 @@ class YahtzeeClient:
 
                 print(data)  # Afficher le message reçu du serveur
 
-                # Cas spécifiques pour les actions demandées par le serveur
                 if "Entrez votre nom" in data:
                     user_input = self.handle_input(">> ")
                     self.send_data(user_input)
@@ -68,19 +67,23 @@ class YahtzeeClient:
                     user_input = self.handle_input("Entrez les indices des dés à relancer (ex: 1,3,5 ou rien pour conserver tous les dés): ")
                     self.send_data(user_input)
 
-                elif "Choisissez un chiffre" in data:
-                    def validate_choice(input_str):
-                        return input_str.isdigit() and 1 <= int(input_str) <= 6
-
-                    user_input = self.handle_input("Entrez un chiffre (1-6): ", validate_choice)
+                elif "Choisissez une figure à remplir" in data:
+                    while True:
+                        user_input = self.handle_input(">> ")
+                        if user_input  in ['1', '2', '3', '4', '5', '6', 'Brelan', 'Petite Suite', 'Grande Suite', 'Full', 'Yahtzee', 'Chance']:
+                            break
+                        print("Figure invalide. Veuillez réessayer.")
                     self.send_data(user_input)
+
+                elif "Points ajoutés" in data:
+                    print(data)
+
+                elif "Tableau des scores" in data:
+                    print(data)
 
                 elif "La partie est terminée" in data:
                     print("Merci d'avoir joué!")
                     break
-
-                else:
-                    continue
 
             except Exception as e:
                 print(f"Erreur: {e}")
