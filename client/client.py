@@ -70,7 +70,8 @@ class YahtzeeClient:
                 elif "Choisissez une figure à remplir" in data:
                     while True:
                         user_input = self.handle_input(">> ")
-                        if user_input  in ['1', '2', '3', '4', '5', '6', 'Brelan', 'Petite Suite', 'Grande Suite', 'Full', 'Yahtzee', 'Chance']:
+                        user_input = user_input.capitalize()
+                        if user_input  in ['1', '2', '3', '4', '5', '6', 'Brelan', 'Petite Suite', 'Grande Suite', 'Full', 'Yahtzee', 'Chance', "Carré"]:
                             break
                         print("Figure invalide. Veuillez réessayer.")
                     self.send_data(user_input)

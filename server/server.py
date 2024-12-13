@@ -131,7 +131,7 @@ class YahtzeeServer:
         tableau_meilleur_score = self.feuilles_scores[player_name].afficher_score(dice)
         client_socket.send(str(tableau_meilleur_score).encode())
         time.sleep(0.5)
-        client_socket.send(f"Choisissez une figure à remplir: {figures_disponibles}:\n".encode())
+        client_socket.send(f"Choisissez une figure à remplir: {",".join(figures_disponibles)}:\n".encode())
 
         while True:
 
@@ -142,9 +142,11 @@ class YahtzeeServer:
                 client_socket.send("Figure invalide, tour ignoré.\n".encode())
             if self.feuilles_scores[player_name].scores[figure] is not None:
                 client_socket.send("Figure déjà remplie.\n".encode())
+                client_socket.send(f"Choisissez une figure à remplir: {",".join(figures_disponibles)}:\n".encode())
 
             else:
                 break
+
 
 
 

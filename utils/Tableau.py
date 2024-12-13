@@ -18,10 +18,10 @@ class Tableau:
         self.headers = headers  # Liste des en-têtes
         self.data = data        # Liste des données (liste de tuples)
 
-    def get_tableau_formatte(self) -> str:
+    def afficher(self):
         # -------------------------------------------------------------------
-        # Retourne le tableau formaté en chaîne de caractères avec des bordures
-        # et un alignement automatique basé sur la largeur maximale de chaque colonne.
+        # Affiche le tableau formaté en console avec des bordures et un
+        # alignement automatique basé sur la largeur maximale de chaque colonne.
         # -------------------------------------------------------------------
 
         # Calcul de la largeur maximale pour chaque colonne
@@ -38,16 +38,11 @@ class Tableau:
             "|".join(f" {str(row[i]).ljust(col_widths[i])} " for i in range(len(row)))
             for row in self.data
         ]
-
-        # Construction du tableau complet
-        tableau = f"+{ligne_separation}+\n"
-        tableau += f"|{ligne_headers}|\n"
-        tableau += f"+{ligne_separation}+\n"
+        tableau = []
+        tableau.append(f"+{ligne_separation}+")
+        tableau.append(f"|{ligne_headers}|")
+        tableau.append(f"+{ligne_separation}+")
         for ligne in lignes_data:
-            tableau += f"|{ligne}|\n"
-        tableau += f"+{ligne_separation}+\n"
-
-        return str(tableau)
-
-    def afficher(self):
-        print(self.get_tableau_formatte())
+            tableau.append(f"|{ligne}|")
+        tableau.append(f"+{ligne_separation}+")
+        return "\n".join(tableau)

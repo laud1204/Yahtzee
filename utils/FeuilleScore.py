@@ -81,7 +81,7 @@ class FeuilleScore:
         ]
 
         tableau = Tableau(headers=["Figure", "Score réalisé", "Score théorique"], data=figures_tableau)
-        return tableau.get_tableau_formatte()
+        return tableau.afficher()
 
     def verifier_bonus_section_superieure(self) -> bool:
         # -------------------------------------------------------------------
