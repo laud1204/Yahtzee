@@ -100,48 +100,61 @@ class YahtzeeClient:
                     print("Déconnexion du serveur.")
                     break
 
-                print(data)  # Afficher le message reçu du serveur
-
-                if "Entrez votre nom" in data:
-                    user_input = self.gestion_entree(">> ")
-                    self.envoyer_donnees(user_input)
-
-                elif "Combien de joueurs vont participer?" in data:
-                    def validate_player_count(input_str):
-                        return input_str.isdigit() and int(input_str) > 1
-
-                    user_input = self.gestion_entree(">> ", validate_player_count)
-                    self.envoyer_donnees(user_input)
-
-                elif "Voulez-vous relancer des dés" in data:
-                    def validate_yes_no(input_str):
-                        return input_str.upper() in ['O', 'N']
-
-                    user_input = self.gestion_entree("(O/N): ", validate_yes_no).upper()
-                    self.envoyer_donnees(user_input)
-
-                elif "Indiquez les indices des dés à relancer" in data:
-                    user_input = self.gestion_entree("Entrez les indices des dés à relancer (ex: 1,3,5 ou rien pour conserver tous les dés): ")
-                    self.envoyer_donnees(user_input)
-
-                elif "Choisissez une figure à remplir" in data:
-                    while True:
+                print(data.replace("Serveur : ", ""))
+                if data.startswith("Serveur : "):
+                    if "Entrez votre nom" in data:
                         user_input = self.gestion_entree(">> ")
-                        user_input = user_input.capitalize()
-                        if user_input  in ['1', '2', '3', '4', '5', '6', 'Brelan', 'Petite Suite', 'Grande Suite', 'Full', 'Yahtzee', 'Chance', "Carré"]:
-                            break
-                        print("Figure invalide. Veuillez réessayer.")
-                    self.envoyer_donnees(user_input)
+                        self.envoyer_donnees(user_input)
 
-                elif "Points ajoutés" in data:
-                    print(data)
+                    if "Vous souhaitez créer une nouvelle partie ou rejoindre une partie existante?" in data:
+                        user_input = self.gestion_entree(">> ")
+                        self.envoyer_donnees(user_input)
 
-                elif "Tableau des scores" in data:
-                    print(data)
+                    if "Combien de joueurs vont participer?" in data:
+                        def validate_player_count(input_str):
+                            return input_str.isdigit() and int(input_str) > 1
 
-                elif "La partie est terminée" in data:
-                    print("Merci d'avoir joué!")
-                    break
+                        user_input = self.gestion_entree(">> ", validate_player_count)
+                        self.envoyer_donnees(user_input)
+                    if "Choisissez une partie à rejoindre" in data:
+                        user_input = self.gestion_entree(">> ")
+                        self.envoyer_donnees(user_input)
+                    if "Choix invalide. Réessayez." in data:
+                        user_input = self.gestion_entree(">> ")
+                        self.envoyer_donnees(user_input)
+                    if "Entrée invalide. Entrez un nombre entier supérieur à 1." in data:
+                        user_input = self.gestion_entree(">> ")
+                        self.envoyer_donnees(user_input)
+
+                    if "Voulez-vous relancer des dés" in data:
+                        def validate_yes_no(input_str):
+                            return input_str.upper() in ['O', 'N']
+
+                        user_input = self.gestion_entree("(O/N): ", validate_yes_no).upper()
+                        self.envoyer_donnees(user_input)
+
+                    if "Indiquez les indices des dés à relancer" in data:
+                        user_input = self.gestion_entree("Entrez les indices des dés à relancer (ex: 1,3,5 ou rien pour conserver tous les dés): ")
+                        self.envoyer_donnees(user_input)
+
+                    if "Choisissez une figure à remplir" in data:
+                        while True:
+                            user_input = self.gestion_entree(">> ")
+                            user_input = user_input.capitalize()
+                            if user_input  in ['1', '2', '3', '4', '5', '6', 'Brelan', 'Petite Suite', 'Grande Suite', 'Full', 'Yahtzee', 'Chance', "Carré"]:
+                                break
+                            print("Figure invalide. Veuillez réessayer.")
+                        self.envoyer_donnees(user_input)
+
+                    if "Points ajoutés" in data:
+                        print(data)
+
+                    elif "Tableau des scores" in data:
+                        print(data)
+
+                    elif "La partie est terminée" in data:
+                        print("Merci d'avoir joué!")
+                        break
 
             except Exception as e:
                 print(f"Erreur: {e}")
