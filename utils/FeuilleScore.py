@@ -27,8 +27,8 @@ class FeuilleScore:
             'Brelan': None,
             'Carré': None,
             'Full': None,
-            'Petite Suite': None,
-            'Grande Suite': None,
+            'Petite suite': None,
+            'Grande suite': None,
             'Yahtzee': None,
             'Chance': None,
             'Bonus Section Supérieure': 0  # Bonus initialisé à 0
@@ -127,9 +127,9 @@ class FeuilleScore:
             return calculateur.calculer_carre(des)
         elif figure == 'Full':
             return calculateur.calculer_full(des)
-        elif figure == 'Petite Suite':
+        elif figure == 'Petite suite':
             return calculateur.calculer_petite_suite(des)
-        elif figure == 'Grande Suite':
+        elif figure == 'Grande suite':
             return calculateur.calculer_grande_suite(des)
         elif figure == 'Yahtzee':
             return calculateur.calculer_yahtzee(des)

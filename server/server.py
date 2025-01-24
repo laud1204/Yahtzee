@@ -73,24 +73,33 @@ class YahtzeeServer:
 
                 while True:
                     try:
-                        choice = int(client_socket.recv(1024).decode().strip())
-                        if 0 < choice <= len(self.parties):
+                        # Recevoir et décoder la réponse du client
+                        data = client_socket.recv(1024).decode().strip()
+                        if not data.isdigit():
+                            # Si l'entrée n'est pas un nombre
+                            client_socket.send("Serveur : Entrée invalide. Entrez un nombre valide : ".encode())
+                            continue
+
+                        # Convertir l'entrée en entier
+                        choice = int(data)
+                        if 1 <= choice <= len(self.parties):
+                            # Si le choix est valide, on sort de la boucle
                             break
                         else:
-                            client_socket.send("Serveur : Choix invalide. Réessayez: ".encode())
+                            # Si le choix est en dehors de l'intervalle
+                            client_socket.send(
+                                f"Serveur : Choix invalide. Entrez un nombre entre 1 et {len(self.parties)} : ".encode())
                     except ValueError:
-                        client_socket.send("Serveur : Entrée invalide. Entrez un nombre entier: ".encode())
+                        # Gestion des erreurs de conversion explicite (peu probable ici grâce à `isdigit()`)
+                        client_socket.send("Serveur : Entrée invalide. Entrez un nombre valide : ".encode())
+                    except Exception as e:
+                        # Pour toute autre exception, fournir un message d'erreur générique et logger l'erreur côté serveur
+                        print(f"Erreur inattendue : {e}")
+                        client_socket.send("Serveur : Une erreur inattendue s'est produite. Réessayez : ".encode())
+
+                # Si on atteint ici, `choice` est valide
                 self.parties[choice - 1].rejoindre_partie(player_name, client_socket)
 
-
-
-
-
-
-            # while not self.game_started:
-            #     time.sleep(1)
-            #
-            # self.tour(client_socket, player_name)
 
         except (BrokenPipeError, ConnectionResetError):
             print(f"Le joueur à l'adresse {addr} s'est déconnecté.")

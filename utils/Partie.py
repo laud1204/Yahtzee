@@ -41,7 +41,7 @@ class Partie:
         # Attend que le nombre requis de joueurs se connecte avant de commencer la partie.
         # -------------------------------------------------------------------
         while len(self.players) < self.required_players:
-            self.broadcast(f"En attente de {self.required_players - len(self.players)} joueur(s) pour démarrer la partie...\n")
+            self.broadcast(f"Serveur : En attente de {self.required_players - len(self.players)} joueur(s) pour démarrer la partie...\n")
             time.sleep(2)
 
         self.game_started = True
@@ -56,6 +56,9 @@ class Partie:
         # :param player: Nom du joueur à ajouter.
         # :param socket: Socket du joueur à ajouter.
         # -------------------------------------------------------------------
+        if len(self.players) >= self.required_players:
+            socket.send("Serveur : La partie est déjà pleine.\n".encode())
+            return
         self.players.append({'name': player, 'socket': socket})
         self.scores[player] = 0
         self.feuilles_scores[player] = FeuilleScore()

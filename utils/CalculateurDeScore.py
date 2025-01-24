@@ -109,7 +109,7 @@ class CalculateurDeScore:
     @staticmethod
     def calculer_petite_suite(des: list[int]) -> int:
         # -------------------------------------------------------------------
-        # Calcule le score pour la figure 'Petite Suite'.
+        # Calcule le score pour la figure 'Petite suite'.
         #
         # :param des: Liste des valeurs des dés.
         # :return: 30 si les dés contiennent une suite de 4 valeurs
@@ -125,7 +125,7 @@ class CalculateurDeScore:
     @staticmethod
     def calculer_grande_suite(des: list[int]) -> int:
         # -------------------------------------------------------------------
-        # Calcule le score pour la figure 'Grande Suite'.
+        # Calcule le score pour la figure 'Grande suite'.
         #
         # :param des: Liste des valeurs des dés.
         # :return: 40 si les dés contiennent une suite de 5 valeurs
