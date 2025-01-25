@@ -14,7 +14,7 @@ class Partie:
         self.game_started = False
         self.turn_lock = threading.Lock()
         self.current_turn = 0
-        self.max_turns = 13
+        self.max_turns = 3
     def information_partie(self):
         return f"Nombre de joueurs: {len(self.players)} / {self.required_players} - Tour actuel: {self.current_turn} / {self.max_turns} - Joueurs: {', '.join([player['name'] for player in self.players])} - Partie commencée: {self.game_started}"
     def broadcast(self, message):
@@ -48,6 +48,13 @@ class Partie:
 
         self.broadcast("Tous les joueurs sont connectés. La partie commence!\n")
         self.tour()
+    def est_terminee(self):
+        # -------------------------------------------------------------------
+        # Vérifie si la partie est terminée.
+        #
+        # :return: True si la partie est terminée, False sinon.
+        # -------------------------------------------------------------------
+        return self.current_turn >= self.max_turns * len(self.players)
 
     def rejoindre_partie(self, player, socket):
         # -------------------------------------------------------------------

@@ -31,6 +31,7 @@ class YahtzeeServer:
         while True:
             client_socket, addr = self.server_socket.accept()
             client_handler = threading.Thread(target=self.gerer_joueur, args=(client_socket, addr))
+            threading.Thread(target=self.supprimer_partie_si_terminee).start()
             client_handler.start()
 
 
@@ -101,8 +102,21 @@ class YahtzeeServer:
                 self.parties[choice - 1].rejoindre_partie(player_name, client_socket)
 
 
+
+
+
         except (BrokenPipeError, ConnectionResetError):
             print(f"Le joueur à l'adresse {addr} s'est déconnecté.")
+    def supprimer_partie_si_terminee(self):
+        # -------------------------------------------------------------------
+        # Supprime une partie de la liste des parties si elle
+        # est terminée.
+        # -------------------------------------------------------------------
+        parties_terminees = [partie for partie in self.parties if partie.est_terminee()]
+        for partie in parties_terminees:
+            self.parties.remove(partie)
+            print(f"La partie {partie} est terminée et a été supprimée.")
+
 
 
 
