@@ -1,9 +1,9 @@
-from client.client import YahtzeeClient
+from client.client import ChatGUI
+
 
 def demarrer_client():
-    client = YahtzeeClient()
-    client.connexion()
-    client.gestion_jeu()
+    gui = ChatGUI()
+    gui.run()
 
 if __name__ == "__main__":
     print("Démarrage du client...")
