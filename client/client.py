@@ -1,10 +1,13 @@
 import socket
-
+from tkinter import *
+import threading
 class YahtzeeClient:
     def __init__(self, host='127.0.0.1', port=65430):
         self.host = host
         self.port = port
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_chat_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connected = False
 
     def connexion(self):
         """
@@ -17,6 +20,25 @@ class YahtzeeClient:
             print(f"Erreur de connexion : {e}")
             exit()
 
+    def connexion_chat(self):
+        """
+        Établit une connexion avec le serveur de chat.
+        """
+        try:
+            self.client_chat_socket.connect((self.host, self.port + 1))
+            print("Connexion au serveur de chat réussie.")
+        except Exception as e:
+            print(f"Erreur de connexion : {e}")
+            exit()
+
+    def envoyer_donnees_chat(self, data):
+        """
+        Envoie des données encodées au serveur.
+        """
+        try:
+            self.client_chat_socket.send(data.encode())
+        except Exception as e:
+            print(f"Erreur lors de l'envoi des données : {e}")
     def envoyer_donnees(self, data):
         """
         Envoie des données encodées au serveur.
@@ -25,6 +47,15 @@ class YahtzeeClient:
             self.client_socket.send(data.encode())
         except Exception as e:
             print(f"Erreur lors de l'envoi des données : {e}")
+    def recevoir_donnees_chat(self):
+        """
+        Reçoit des données du serveur de chat, les décode et les retourne.
+        """
+        try:
+            return self.client_chat_socket.recv(1024).decode()
+        except Exception as e:
+            print(f"Erreur lors de la réception des données : {e}")
+            return None
 
     def recevoir_donnees(self):
         """
@@ -59,7 +90,9 @@ class YahtzeeClient:
                 return self.gestion_entree(">> ")
             elif "Choisissez une partie à rejoindre" in message:
                 return self.gestion_entree(">> ", lambda x: x.isdigit() and int(x) > 0)
-            elif "Choix invalide. Entrez un nombre valide" in message:
+            elif "La partie est déjà pleine" in message:
+                return self.gestion_entree(">> ", lambda x: x.isdigit() and int(x) > 0)
+            elif "Choix invalide" in message:
                 return self.gestion_entree(">> ", lambda x: x.isdigit() and int(x) > 0)
             elif "Combien de joueurs vont participer?" in message:
                 return self.gestion_entree(">> ", lambda x: x.isdigit() and int(x) > 1)
@@ -115,6 +148,57 @@ class YahtzeeClient:
 
         self.client_socket.close()
 
+class ChatGUI:
+    def __init__(self):
+        self.root = Tk()
+        self.root.title("Chat")
+
+        BG_COLOR = "#17202A"
+        TEXT_COLOR = "#EAECEE"
+        FONT = "Helvetica 14"
+        FONT_BOLD = "Helvetica 13 bold"
+
+        self.txt = Text(self.root, bg=BG_COLOR, fg=TEXT_COLOR, font=FONT, width=60)
+        self.txt.grid(row=1, column=0, columnspan=2)
+
+        self.e = Entry(self.root, bg="#2C3E50", fg=TEXT_COLOR, font=FONT, width=55)
+        self.e.grid(row=2, column=0)
+
+        send_btn = Button(self.root, text="Send", font=FONT_BOLD, bg="#ABB2B9", command=self.send)
+        send_btn.grid(row=2, column=1)
+
+        self.txt.insert(END, "Bienvenue dans le chat de Yahtzee!\n")
+
+        self.client = YahtzeeClient()
+        self.client_thread = threading.Thread(target=self.run_client, daemon=True)
+        self.client_thread.start()
+
+
+    def send(self):
+        user_input = self.e.get()
+        if user_input.strip():
+            self.txt.insert(END, f"\nVous -> {user_input}")
+            self.client.envoyer_donnees_chat(user_input)
+            self.e.delete(0, END)
+
+
+    def run_client(self):
+        self.client.connexion()
+        self.client.connexion_chat()
+        def recevoir_messages():
+            print("En attente de messages...")
+            while True:
+                data = self.client.recevoir_donnees_chat()
+                if data:
+                    self.txt.insert(END, f"\n{data}")
+        threading.Thread(target=recevoir_messages, daemon=True).start()
+        self.client.gestion_jeu()
+
+
+
+
+    def run(self):
+        self.root.mainloop()
 
 # Exemple d'exécution (non inclus dans un script si utilisé comme module)
 if __name__ == "__main__":
