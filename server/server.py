@@ -182,7 +182,11 @@ class ChatServer:
             print(f"Le client à l'adresse {addr} s'est déconnecté.")
         finally:
             client_socket.close()
-            self.clients.remove(client_socket)
+            try:
+
+                self.clients.remove(client_socket)
+            except:
+                pass
             print(f"Connexion avec {addr} fermée.")
 
 
