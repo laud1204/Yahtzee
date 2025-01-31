@@ -31,7 +31,7 @@ Yahtzee/
 ## **Installation**
 1. **Cloner le projet :**
    ```bash
-   git clone https://github.com/votre-utilisateur/Yahtzee-v1.git
+   git clone https://github.com/votre-utilisateur/Yahtzee.git
    cd Yahtzee-v1
    ```
 
