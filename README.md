@@ -1,7 +1,7 @@
 # **Yahtzee - Jeu Multijoueur en Python**
 
 ## **Description**
-Ce projet est une implémentation en Python du célèbre jeu de dés **Yahtzee**, où plusieurs joueurs peuvent se connecter à un serveur central pour jouer ensemble. Le programme vous permet de choisir si vous voulez être un serveur ou un joueur (client).
+Ce projet est une implémentation en Python du célèbre jeu de dés **Yahtzee**, où plusieurs joueurs peuvent se connecter à un serveur central pour jouer ensemble. Le programme est divisé en deux composants : un **serveur** qui gère le jeu et des **clients** qui représentent les joueurs.
 
 ---
 
@@ -17,7 +17,12 @@ Yahtzee-v1/
 ├── client/
 │   ├── client.py         # Code du client (joueur)
 │
-├── launcher.py           # Script principal pour lancer le serveur ou un joueur
+├── utils/
+│   ├── score.py          # Gestion des scores
+│   ├── tableau.py        # Affichage des scores
+│
+├── launch_server.py      # Script pour démarrer le serveur
+├── launch_client.py      # Script pour démarrer un client
 ├── README.md             # Documentation (ce fichier)
 ```
 
@@ -33,50 +38,26 @@ Yahtzee-v1/
 2. **Vérifier l'environnement Python :**
     - Assurez-vous d'avoir **Python 3.8** ou une version ultérieure installée.
 
-3. **Installer les dépendances (si nécessaires) :**
+3. **Installer les dépendances (si nécessaire) :**
     - Ce projet n'a pas de dépendances externes pour l'instant, mais assurez-vous que Python est bien configuré.
 
 ---
 
 ## **Exécution**
 
-### **Étape 1 : Lancer le Launcher**
-Le fichier `launcher.py` est utilisé pour décider si vous voulez exécuter le serveur ou devenir un joueur. Lancer le script :
-
+### **Étape 1 : Lancer le serveur**
+Sur la machine qui hébergera le serveur, exécutez :
 ```bash
-python launcher.py
+python launch_server.py
 ```
+Le serveur démarre et attend que les joueurs se connectent.
 
-### **Étape 2 : Choisissez une option**
-Le programme affichera le menu suivant :
+### **Étape 2 : Lancer un client**
+Sur une autre machine (ou la même), lancez :
+```bash
+python launch_client.py
 ```
-Bienvenue dans le jeu Yahtzee !
-1. Lancer le serveur
-2. Lancer un client (joueur)
-Entrez votre choix (1 ou 2) :
-```
-
-#### **Option 1 : Lancer le serveur**
-- Si vous choisissez l'option **1**, le serveur démarrera.
-- Une fois lancé, le serveur attend que les joueurs se connectent.
-- **Astuce :** Notez l'adresse IP de la machine exécutant le serveur si les clients se connectent depuis d'autres machines.
-
-#### **Option 2 : Lancer un client (joueur)**
-- Si vous choisissez l'option **2**, le client démarrera.
-- Entrez votre nom lorsque demandé, puis suivez les instructions affichées dans le terminal pour jouer.
-
----
-
-## **Exemple de scénario**
-
-### **1. Serveur**
-- Exécutez le script `launcher.py` sur la machine qui hébergera le jeu et choisissez **1**.
-- Le serveur démarre et écoute sur l'adresse **127.0.0.1:65430** (par défaut).
-- Le premier joueur connecté au serveur spécifie combien de joueurs participeront.
-
-### **2. Joueur**
-- Sur une autre machine (ou le même ordinateur), lancez `launcher.py` et choisissez **2**.
-- Entrez l'adresse IP du serveur (si nécessaire) et suivez les étapes pour jouer.
+Le client demandera l'adresse IP du serveur et d'autres informations nécessaires pour rejoindre la partie.
 
 ---
 
@@ -89,12 +70,13 @@ Entrez votre choix (1 ou 2) :
 ---
 
 ## **Notes importantes**
-1. **Plusieurs joueurs :** Ce jeu fonctionne en mode multijoueur. Assurez-vous que le serveur est actif avant de lancer des clients.
+1. **Multijoueur :** Ce jeu fonctionne en mode multijoueur. Assurez-vous que le serveur est actif avant de lancer des clients.
 2. **Déconnexion :** Si un joueur se déconnecte, son score est retiré, mais le jeu continue pour les autres participants.
-3. **Debugging :** Si vous rencontrez des erreurs, assurez-vous que tous les scripts sont dans leurs emplacements respectifs (`server/`, `client/`).
+3. **Debugging :** Si vous rencontrez des erreurs, assurez-vous que tous les scripts sont dans leurs emplacements respectifs (`server/`, `client/`, `utils/`).
 
 ---
 
 ## **Auteur**
 - Créé par : Lauretta Delmas, Bastien Cabanié, Oussama Guelagli
 ---
+
