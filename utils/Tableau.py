@@ -16,7 +16,7 @@ class Tableau:
         # :param data: Liste de tuples représentant les données du tableau.
         # -------------------------------------------------------------------
         self.headers = headers  # Liste des en-têtes
-        self.data = data        # Liste des données (liste de tuples)
+        self.data = data  # Liste des données (liste de tuples)
 
     def afficher(self):
         # -------------------------------------------------------------------
