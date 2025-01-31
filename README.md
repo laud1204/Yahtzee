@@ -32,7 +32,7 @@ Yahtzee/
 1. **Cloner le projet :**
    ```bash
    git clone https://github.com/votre-utilisateur/Yahtzee.git
-   cd Yahtzee-v1
+   cd Yahtzee
    ```
 
 2. **Vérifier l'environnement Python :**
