@@ -14,7 +14,7 @@ class Partie:
         self.game_started = False
         self.turn_lock = threading.Lock()
         self.current_turn = 0
-        self.max_turns = 3
+        self.max_turns = 13
 
     def peut_rejoindre(self):
         return len(self.players) < self.required_players and not self.game_started
