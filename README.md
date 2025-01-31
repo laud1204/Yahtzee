@@ -9,7 +9,7 @@ Ce projet est une implémentation en Python du célèbre jeu de dés **Yahtzee**
 Le projet est structuré comme suit :
 
 ```
-Yahtzee-v1/
+Yahtzee/
 │
 ├── server/
 │   ├── server.py         # Code du serveur
