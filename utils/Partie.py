@@ -6,19 +6,22 @@ from utils.FeuilleScore import FeuilleScore
 
 
 class Partie:
-    def __init__(self, required_players , player, socket ):
+    def __init__(self, required_players, player, socket):
         self.players = [{'name': player, 'socket': socket}]
-        self.scores = {player : 0}
-        self.feuilles_scores = {player : FeuilleScore()}
+        self.scores = {player: 0}
+        self.feuilles_scores = {player: FeuilleScore()}
         self.required_players = required_players
         self.game_started = False
         self.turn_lock = threading.Lock()
         self.current_turn = 0
         self.max_turns = 3
+
     def peut_rejoindre(self):
         return len(self.players) < self.required_players and not self.game_started
+
     def information_partie(self):
         return f"Nombre de joueurs: {len(self.players)} / {self.required_players} - Tour actuel: {self.current_turn} / {self.max_turns} - Joueurs: {', '.join([player['name'] for player in self.players])} - Partie commencée: {self.game_started}"
+
     def broadcast(self, message):
         # -------------------------------------------------------------------
         # Envoie un message à tous les joueurs connectés.
@@ -43,13 +46,15 @@ class Partie:
         # Attend que le nombre requis de joueurs se connecte avant de commencer la partie.
         # -------------------------------------------------------------------
         while len(self.players) < self.required_players:
-            self.broadcast(f"Serveur : En attente de {self.required_players - len(self.players)} joueur(s) pour démarrer la partie...\n")
+            self.broadcast(
+                f"Serveur : En attente de {self.required_players - len(self.players)} joueur(s) pour démarrer la partie...\n")
             time.sleep(2)
 
         self.game_started = True
 
         self.broadcast("Tous les joueurs sont connectés. La partie commence!\n")
         self.tour()
+
     def est_terminee(self):
         # -------------------------------------------------------------------
         # Vérifie si la partie est terminée.
@@ -57,8 +62,6 @@ class Partie:
         # :return: True si la partie est terminée, False sinon.
         # -------------------------------------------------------------------
         return self.current_turn >= self.max_turns * len(self.players)
-
-
 
     def client_sockets(self):
         return [player['socket'] for player in self.players]
@@ -76,6 +79,7 @@ class Partie:
         self.players.append({'name': player, 'socket': socket})
         self.scores[player] = 0
         self.feuilles_scores[player] = FeuilleScore()
+
     def tour(self):
         # -------------------------------------------------------------------
         # Gère le déroulement d'un tour pour chaque joueur de la partie.
@@ -142,7 +146,8 @@ class Partie:
         tableau_meilleur_score = self.feuilles_scores[player_name].afficher_score(dice)
         client_socket.send(str(tableau_meilleur_score).encode())
         time.sleep(0.5)
-        client_socket.send(("Serveur :  Choisissez une figure à remplir:"+ ",".join(figures_disponibles)+":\n").encode())
+        client_socket.send(
+            ("Serveur :  Choisissez une figure à remplir:" + ",".join(figures_disponibles) + ":\n").encode())
 
         while True:
             figure = client_socket.recv(1024).decode().strip()
@@ -156,9 +161,6 @@ class Partie:
             else:
                 break
 
-
-
-
         score = self.feuilles_scores[player_name].calculer_score(figure, dice)
         self.feuilles_scores[player_name].noter_score(figure, score)
         self.scores[player_name] = sum(
@@ -167,7 +169,6 @@ class Partie:
         client_socket.send(f"Serveur : Points ajoutés: {score}. Score total: {self.scores[player_name]}\n".encode())
         self.broadcast(f"{player_name} a marqué {score} points pour la figure {figure}.\n")
         self.afficher_tableauScore()
-
 
     def afficher_tableauScore(self):
         # -------------------------------------------------------------------
